@@ -10,26 +10,46 @@ export default class CreateDepartamento extends Component {
     
     state={
         mensaje:"",
-        status:false
+        status:false,
+        error:false
     }
 
     insertDepartamento=(event)=> {
         event.preventDefault();
+        const numero = Number(this.cajaNumero.current.value);
+        const nombre = this.cajaNombre.current.value.trim();
+        const localidad = this.cajaLocalidad.current.value.trim();
+
+        if(!Number.isInteger(numero) || !nombre || !localidad){
+            this.setState({
+                mensaje:"Introduce un número entero, un nombre y una localidad.",
+                error:true
+            });
+            return;
+        }
+
         let departamento={
-            numero: parseInt(this.cajaNumero.current.value),
-            nombre: this.cajaNombre.current.value,
-            localidad: this.cajaLocalidad.current.value
+            numero: numero,
+            nombre: nombre,
+            localidad: localidad
         }
 
         this.servicio.insertDepartamento(departamento).then((result)=>{
             this.setState({
                 mensaje:"Departamento insertado",
-                status:true
+                status:true,
+                error:false
             })
         }).catch((error)=>{
+            const mensaje = error.response && error.response.data
+                ? (typeof error.response.data === "string"
+                    ? error.response.data
+                    : error.response.data.message || error.response.data.title)
+                : error.message;
             this.setState({
-                mensaje:error.mensaje,
-                status:false
+                mensaje:mensaje || "No se pudo insertar el departamento.",
+                status:false,
+                error:true
             })
         })
 
@@ -38,7 +58,7 @@ export default class CreateDepartamento extends Component {
     
   render() {
 
-    if(this.state.status==true){
+    if(this.state.status===true){
         return <Navigate to="/"/>
 
     }else{
@@ -50,20 +70,20 @@ export default class CreateDepartamento extends Component {
         {
             this.state.mensaje &&
             (
-                <div className="alert alert-success" role="alert">
+                <div className={`alert ${this.state.error ? "alert-danger" : "alert-success"}`} role="alert">
                     {this.state.mensaje}
                 </div>
             )
         }
         <h1>Insertar departamento </h1>
-        <form >
+        <form onSubmit={this.insertDepartamento}>
             <label >Número:</label>
-            <input type="text" id="numero" className="form-control" ref={this.cajaNumero} />
+            <input type="number" id="numero" className="form-control" ref={this.cajaNumero} required />
             <label >Nombre:</label>
-            <input type="text" id="nombre" className="form-control" ref={this.cajaNombre} />
+            <input type="text" id="nombre" className="form-control" ref={this.cajaNombre} required />
             <label >Localidad:</label>
-            <input type="text" id="localidad" className="form-control" ref={this.cajaLocalidad} />
-            <button type="submit" onClick={this.insertDepartamento} className="btn btn-primary">Insertar</button>
+            <input type="text" id="localidad" className="form-control" ref={this.cajaLocalidad} required />
+            <button type="submit" className="btn btn-primary">Insertar</button>
 
         </form>
       </div>
