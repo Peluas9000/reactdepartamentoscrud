@@ -1,0 +1,55 @@
+import React, { Component } from 'react'
+import loading from './../assets/images/loading.png'
+import ServiceDepartamentos from '../services/ServiceDepartamentos';
+export default class Home extends Component {
+    servicio= new ServiceDepartamentos();
+    state={
+        departamentos:[],
+        status:false
+    }
+
+    loadDepartamentos=()=>{
+        this.servicio.getDepartamentos().then((result)=>{
+            this.setState({
+                departamentos:result,
+                status:true
+            })
+        })
+    }
+    componentDidMount=()=>{
+        this.loadDepartamentos();
+    }
+
+  render() {
+    if(this.state.status==true){
+    return (
+      <div>
+        <h1>Bienvenido a la aplicación</h1>
+        <h2>Listado de departamentos</h2>
+        <table className='table table-bordered'>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Localidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {this.state.departamentos.map((departamento) => (
+                    <tr key={departamento.id}>
+                        <td>{departamento.nombre}</td>
+                        <td>{departamento.localidad}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <img src={loading} alt="Loading..." />
+      </div>
+    )
+  
+  }}
+}
