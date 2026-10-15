@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import loading from './../assets/images/loading.png'
 import ServiceDepartamentos from '../services/ServiceDepartamentos';
 import { NavLink } from 'react-router-dom';
+import DeleteDepartamento from './DeleteAvisoDepartamento';
 export default class Home extends Component {
     servicio= new ServiceDepartamentos();
     state={
@@ -17,10 +18,11 @@ export default class Home extends Component {
             })
         })
     }
-    deleteDepartamento=(idDepartamento)=>{
-        this.servicio.deleteDepartamento(idDepartamento).then((result)=>{
-           this.loadDepartamentos();
-        })
+    deleteDepartamento=(departamento)=>{
+        
+        return <DeleteDepartamento id={departamento.numero} nombre={departamento.nombre} localidad={departamento.localidad}/>
+
+       
     }
     componentDidMount=()=>{
         this.loadDepartamentos();
@@ -45,7 +47,7 @@ export default class Home extends Component {
                         <td>{departamento.nombre}</td>
                         <td>{departamento.localidad}</td>
                         <td><NavLink  to={"update/" + departamento.numero+"/"+departamento.nombre+"/"+departamento.localidad} className="btn btn-primary">Actualizar</NavLink></td>
-                        <td><button className="btn btn-danger" onClick={() => this.deleteDepartamento(departamento.numero)}>Eliminar</button></td>
+                        <td><button className="btn btn-danger" onClick={() => this.deleteDepartamento(departamento)}>Eliminar</button></td>
                     </tr>
                 ))}
             </tbody>
