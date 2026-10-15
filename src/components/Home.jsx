@@ -7,7 +7,8 @@ export default class Home extends Component {
     servicio= new ServiceDepartamentos();
     state={
         departamentos:[],
-        status:false
+        status:false,
+        departamentoSeleccionado:null
     }
 
     loadDepartamentos=()=>{
@@ -18,18 +19,44 @@ export default class Home extends Component {
             })
         })
     }
-    deleteDepartamento=(departamento)=>{
-        
-        return <DeleteDepartamento id={departamento.numero} nombre={departamento.nombre} localidad={departamento.localidad}/>
+    seleccionarDepartamento=(departamento)=>{
+        this.setState({
+            departamentoSeleccionado:departamento
+        })
+    }
 
-       
+    cancelarEliminacion=()=>{
+        this.setState({
+            departamentoSeleccionado:null
+        })
+    }
+
+    deleteDepartamento=(departamento)=>{
+        this.servicio.deleteDepartamento(departamento.numero).then(()=>{
+            this.setState({
+                departamentoSeleccionado:null,
+                status:false
+            })
+            this.loadDepartamentos()
+        }).catch((error)=>{
+            console.error("Error al eliminar el departamento", error)
+        })
     }
     componentDidMount=()=>{
         this.loadDepartamentos();
     }
 
   render() {
-    if(this.state.status==true){
+    if(this.state.status===true){
+    if(this.state.departamentoSeleccionado){
+      return (
+        <DeleteDepartamento
+          departamento={this.state.departamentoSeleccionado}
+          deleteDepartamento={this.deleteDepartamento}
+          cancelarEliminacion={this.cancelarEliminacion}
+        />
+      )
+    }
     return (
       <div>
         <h1>Bienvenido a la aplicación</h1>
@@ -47,7 +74,7 @@ export default class Home extends Component {
                         <td>{departamento.nombre}</td>
                         <td>{departamento.localidad}</td>
                         <td><NavLink  to={"update/" + departamento.numero+"/"+departamento.nombre+"/"+departamento.localidad} className="btn btn-primary">Actualizar</NavLink></td>
-                        <td><button className="btn btn-danger" onClick={() => this.deleteDepartamento(departamento)}>Eliminar</button></td>
+                        <td><button className="btn btn-danger" onClick={() => this.seleccionarDepartamento(departamento)}>Eliminar</button></td>
                     </tr>
                 ))}
             </tbody>
