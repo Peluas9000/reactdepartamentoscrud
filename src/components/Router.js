@@ -4,6 +4,7 @@ import Menu from './Menu'
 import Home from './Home'
 import Update from './Update'
 import CreateDepartamento from './CreateDepartamento'
+import HospitalesMultiple from './HospitalesMultiple'
 
 export default class Router extends Component {
   render() {
@@ -19,6 +20,7 @@ export default class Router extends Component {
             <Route path="/" element={<Home/>}/> 
             <Route path="/create" element={<CreateDepartamento/>}/>
             <Route path="/update/:id/:nombre/:localidad" element={<UpdateDepartamentoElement/>}/>
+            <Route path="/hospitales" element={<HospitalesMultiple/>}/>
         </Routes>
       </BrowserRouter>
     )

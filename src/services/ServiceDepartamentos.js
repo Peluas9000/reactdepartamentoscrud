@@ -4,6 +4,8 @@ import axios from 'axios';
 
 export default class ServiceDepartamentos {
 
+    
+
     getDepartamentos=()=>{
         return new Promise(function(resolve,reject){
             let url=Global.urlApiDepartamentos;
